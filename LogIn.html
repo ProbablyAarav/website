@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            width: 100px;
+            margin-right: 10px;
+            text-align: right;
+        }
+        .form-group input {
+            flex: 1;
+        }
+        .required::after {
+            content: "*";
+            color: red;
+            margin-left: 5px;
+            vertical-align: super;
+        }
+        h1 {
+            text-shadow: 3px 3px 5px hsl(0, 97%, 74%), -3px -3px 5px rgb(118, 118, 238);
+        }
+    </style>
+</head>
+<body>
+    <h1>Log in/ sign up here</h1>
+    <form id="loginForm" onsubmit="return getUserPass(event)">
+        <div class="form-group">
+            <label for="username" class="required">Username: </label>
+            <input type="text" id="username" name="username" minlength="4" maxlength="15" required>
+        </div>
+        <div class="form-group">
+            <label for="password" class="required">Password: </label>
+            <input type="password" id="password" name="password" minlength="4" maxlength="15" required>
+        </div>
+        <input type="reset">
+        <input type="submit">
+    </form>
+    <p id="confirm"></p>
+    <a href="index.html"><button>Go back to the homepage</button></a>
+    <script>
+        async function getUserPass(event){
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch('login.csv');
+                const data = await response.text();
+                const rows = data.split('\n');
+
+                let validUser = false;
+                for (const row of rows) {
+                    const [csvUsername, csvPassword] = row.split(',');
+                    if (csvUsername.trim() === username && csvPassword.trim() === password) {
+                        validUser = true;
+                        break;
+                    }
+                }
+
+                if (validUser) {
+                    document.getElementById("confirm").innerHTML = "Logged in!";
+                } else {
+                    alert("Invalid username or password.");
+                    document.getElementById("confirm").innerHTML="Incorrect credentials"
+                }
+            } catch (error) {
+                console.error("Error reading the CSV file:", error);
+            }
+        }
+    </script>
+</body>
+</html>

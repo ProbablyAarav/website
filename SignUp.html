@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-group {
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            width: 150px;
+            margin-right: 10px;
+            text-align: right;
+        }
+        .form-group input {
+            flex: 1;
+        }
+        .required::after {
+            content: "*";
+            color: red;
+            margin-left: 5px;
+            vertical-align: super;
+        }
+        h1 {
+            text-shadow: 3px 3px 5px hsl(0, 97%, 74%), -3px -3px 5px rgb(118, 118, 238);
+        }
+    </style>
+</head>
+<body>
+    <h1>Sign Up Here</h1>
+    <form id="signupForm">
+        <div class="form-group">
+            <label for="username" class="required">Username: </label>
+            <input type="text" id="username" name="username" minlength="4" maxlength="15" required method="POST">
+        </div>
+        <div class="form-group">
+            <label for="password" class="required">Password: </label>
+            <input type="password" id="password" name="password" minlength="4" maxlength="15" required method="POST">
+        </div>
+        <div class="form-group">
+            <label for="email" class="required">Email: </label>
+            <input type="email" id="email" name="email" required method="POST">
+        </div>
+        <div class="form-group">
+            <label for="dob">Date of Birth (optional): </label>
+            <input type="date" id="dob" name="dob" method="POST">
+        </div>
+        <input type="reset" value="Reset">
+        <input type="submit" value="Submit" REQUEST_METHOD="POST">
+    </form>
+    <p id="confirm"></p>
+    <a href="index.html"><button>Go back to the homepage</button></a>
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const email = document.getElementById("email").value;
+            const dob = document.getElementById("dob").value;
+
+            const formData = new FormData();
+            formData.append("username", username);
+            formData.append("password", password);
+            formData.append("email", email);
+            formData.append("dob", dob);
+
+            fetch("validation.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("confirm").innerText = data;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("confirm").innerText = "An error occurred while signing up.";
+            });
+        });
+    </script>
+</body>
+</html>
